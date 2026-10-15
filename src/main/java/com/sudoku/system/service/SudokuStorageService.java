@@ -29,9 +29,17 @@ public class SudokuStorageService {
     public UUID upload(MultipartFile file) {
         int[][] grid = toGrid(CsvLines.getLines(file));
         UUID id = UUID.randomUUID();
-        CsvLines.writeLines(resolvePath(id, FileConstants.QUESTION_SUFFIX), toLines(grid));
+        saveGrid(id.toString(), FileConstants.QUESTION_SUFFIX, grid);
 
         return id;
+    }
+
+    public int[][] loadGrid(String id, String suffix) {
+        return toGrid(CsvLines.getLines(getFilePath(id, suffix)));
+    }
+
+    public void saveGrid(String id, String suffix, int[][] grid) {
+        CsvLines.writeLines(resolvePath(parseId(id), suffix), toLines(grid));
     }
 
     public Path getFilePath(String id, String suffix) {
@@ -44,7 +52,7 @@ public class SudokuStorageService {
         return path;
     }
 
-    public int[][] toGrid(List<String[]> lines) {
+    private int[][] toGrid(List<String[]> lines) {
         if (lines.size() != SudokuConstants.GRID_SIZE) {
             throw new InvalidSudokuException(ErrorConstants.INVALID_SUDOKU_FILE);
         }
@@ -66,7 +74,7 @@ public class SudokuStorageService {
         return grid;
     }
 
-    public List<String> toLines(int[][] grid) {
+    private List<String> toLines(int[][] grid) {
         return Arrays.stream(grid)
                 .map(row -> Arrays.stream(row)
                         .mapToObj(String::valueOf)
