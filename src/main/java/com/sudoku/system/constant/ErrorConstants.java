@@ -9,6 +9,8 @@ public final class ErrorConstants {
     public static final String INVALID_SUDOKU_ID = "Invalid sudoku id";
     public static final String SUDOKU_NOT_FOUND = "Sudoku not found";
     public static final String FILE_TOO_LARGE = "File is too large";
+    public static final String INVALID_SUDOKU_RULES = "Sudoku has duplicate numbers in a row, column or box";
+    public static final String UNSOLVABLE_SUDOKU = "Sudoku has no solution";
 
     private ErrorConstants() {
     }

@@ -12,7 +12,8 @@ The API runs on `http://localhost:8080`.
 
 ## File format
 
-A puzzle is a CSV file with 9 lines of 9 comma-separated numbers. Use `0` for empty cells and `1`–`9` for filled ones. The file has no header line.
+A puzzle is a CSV file with 9 lines of 9 comma-separated numbers. Use `0` for empty cells and `1`–`9` for filled ones.
+The file has no header line.
 
 ```csv
 5,3,0,0,7,0,0,0,0
@@ -30,30 +31,29 @@ Uploads are limited to 10KB.
 
 ## Storage
 
-Files are saved in the `data/` folder at the project root. You can change the folder with `sudoku.data-dir` in `application.properties`. Each puzzle gets a UUID, and its files are named after it:
+Files are saved in the `data/` folder at the project root. You can change the folder with `sudoku.data-dir` in
+`application.properties`. Each puzzle gets a UUID, and its files are named after it:
 
-| File | Content |
-|---|---|
+| File         | Content               |
+|--------------|-----------------------|
 | `{id}-q.csv` | the uploaded question |
-| `{id}-a.csv` | the solved answer |
+| `{id}-a.csv` | the solved answer     |
 
 ## Endpoints
 
-### 1. Upload a puzzle
+### 1. Solve a puzzle
 
-`POST /sudoku`
+`POST /sudoku/solve`
 
-Uploads a puzzle file, validates it, saves it as `{id}-q.csv` and returns the new ID.
+Uploads a puzzle file, validates it, saves it as `{id}-q.csv`, solves it, saves the result as `{id}-a.csv` and returns
+the solved file.
 
 ```bash
-curl -F "file=@puzzle.csv" localhost:8080/sudoku
+curl -OJ -F "file=@puzzle.csv" localhost:8080/sudoku/solve
 ```
 
-Response `201 Created`:
-
-```json
-{ "id": "c6ff7e74-b642-452d-aa5b-c6ed51fcfe00" }
-```
+Response `200 OK` with the solved CSV file, named `{id}-a.csv`. The ID in the file name can be used with the endpoints
+below.
 
 ### 2. Download a question
 
@@ -83,11 +83,13 @@ Response `200 OK` with the CSV file.
 
 Errors are returned as plain text.
 
-| Status | Message | When |
-|---|---|---|
-| `400` | Sudoku file must have 9 lines with 9 numbers from 0 to 9 | The upload is empty, has the wrong size or contains a value that isn't 0–9 |
-| `400` | Invalid sudoku id | The ID isn't a valid UUID |
-| `404` | Sudoku not found | No file exists for that ID |
-| `413` | File is too large | The upload is over 10KB |
-| `500` | An error occurred while reading lines / writing lines | The server failed to read or write a file |
-| `500` | Something went wrong | Any other unexpected error |
+| Status | Message                                                  | When                                                                       |
+|--------|----------------------------------------------------------|----------------------------------------------------------------------------|
+| `400`  | Sudoku file must have 9 lines with 9 numbers from 0 to 9 | The upload is empty, has the wrong size or contains a value that isn't 0–9 |
+| `400`  | Sudoku has duplicate numbers in a row, column or box     | The puzzle breaks the sudoku rules                                         |
+| `400`  | Sudoku has no solution                                   | The puzzle follows the rules but can't be solved                           |
+| `400`  | Invalid sudoku id                                        | The ID isn't a valid UUID                                                  |
+| `404`  | Sudoku not found                                         | No file exists for that ID                                                 |
+| `413`  | File is too large                                        | The upload is over 10KB                                                    |
+| `500`  | An error occurred while reading lines / writing lines    | The server failed to read or write a file                                  |
+| `500`  | Something went wrong                                     | Any other unexpected error                                                 |
