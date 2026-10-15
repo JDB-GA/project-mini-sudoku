@@ -1,6 +1,7 @@
 package com.sudoku.system.controller;
 
 import com.sudoku.system.constant.FileConstants;
+import com.sudoku.system.constant.SudokuConstants;
 import com.sudoku.system.service.SudokuService;
 import com.sudoku.system.service.SudokuStorageService;
 import org.springframework.core.io.FileSystemResource;
@@ -42,7 +43,16 @@ public class SudokuController {
         String id = storageService.upload(file).toString();
         sudokuService.solve(id);
 
-        return download(id, FileConstants.ANSWER_SUFFIX);
+        String message = String.format(
+                SudokuConstants.SOLVED_MESSAGE,
+                storageService.getFilePath(id, FileConstants.QUESTION_SUFFIX),
+                storageService.getFilePath(id, FileConstants.ANSWER_SUFFIX));
+        ResponseEntity<Resource> answer = download(id, FileConstants.ANSWER_SUFFIX);
+
+        return ResponseEntity.ok()
+                .headers(answer.getHeaders())
+                .header(SudokuConstants.MESSAGE_HEADER, message)
+                .body(answer.getBody());
     }
 
     @GetMapping("/{id}/question")

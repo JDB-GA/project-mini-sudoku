@@ -49,11 +49,15 @@ Uploads a puzzle file, validates it, saves it as `{id}-q.csv`, solves it, saves 
 the solved file.
 
 ```bash
-curl -OJ -F "file=@puzzle.csv" localhost:8080/sudoku/solve
+curl -OJ -D - -F "file=@puzzle.csv" localhost:8080/sudoku/solve
 ```
 
-Response `200 OK` with the solved CSV file, named `{id}-a.csv`. The ID in the file name can be used with the endpoints
-below.
+Response `200 OK` with the solved CSV file, named `{id}-a.csv`. The `Sudoku-Message` header holds a success message with
+the path of both files:
+
+```
+Sudoku-Message: The algorithm has been solved, question path = data/c6ff7e74-b642-452d-aa5b-c6ed51fcfe00-q.csv and answer path = data/c6ff7e74-b642-452d-aa5b-c6ed51fcfe00-a.csv
+```
 
 ### 2. Download a question
 
