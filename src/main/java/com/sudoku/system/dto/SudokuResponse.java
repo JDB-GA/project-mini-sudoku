@@ -1,4 +1,6 @@
 package com.sudoku.system.dto;
 
-public class SudokuResponse {
+import java.util.UUID;
+
+public record SudokuResponse(UUID id) {
 }
