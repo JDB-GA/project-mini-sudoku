@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 public final class CsvLines {
 
@@ -38,6 +39,22 @@ public final class CsvLines {
             Files.write(linesPath, lines);
         } catch (IOException e) {
             throw new LinesException(ErrorConstants.LINES_WRITE_ERROR, e);
+        }
+    }
+
+    public static List<String> listFiles(Path dir) {
+        if (!Files.exists(dir)) {
+            return List.of();
+        }
+
+        try (Stream<Path> files = Files.list(dir)) {
+            return files
+                    .map(path -> path.getFileName().toString())
+                    .filter(name -> name.endsWith(FileConstants.CSV_EXTENSION))
+                    .sorted()
+                    .toList();
+        } catch (IOException e) {
+            throw new LinesException(ErrorConstants.FILES_LIST_ERROR, e);
         }
     }
 

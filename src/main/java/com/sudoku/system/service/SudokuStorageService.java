@@ -42,6 +42,10 @@ public class SudokuStorageService {
         CsvLines.writeLines(resolvePath(parseId(id), suffix), toLines(grid));
     }
 
+    public List<String> listFiles() {
+        return CsvLines.listFiles(dataDir);
+    }
+
     public Path getFilePath(String id, String suffix) {
         Path path = resolvePath(parseId(id), suffix);
 

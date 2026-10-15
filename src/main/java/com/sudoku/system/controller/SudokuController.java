@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 @RequestMapping("/sudoku")
@@ -29,6 +30,11 @@ public class SudokuController {
     public SudokuController(SudokuStorageService storageService, SudokuService sudokuService) {
         this.storageService = storageService;
         this.sudokuService = sudokuService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<String>> listFiles() {
+        return ResponseEntity.ok(storageService.listFiles());
     }
 
     @PostMapping("/solve")

@@ -79,6 +79,26 @@ curl -OJ localhost:8080/sudoku/c6ff7e74-b642-452d-aa5b-c6ed51fcfe00/answer
 
 Response `200 OK` with the CSV file.
 
+### 4. List all files
+
+`GET /sudoku`
+
+Returns the names of all question and answer files in the data folder, sorted by name. It returns an empty list if there
+are none.
+
+```bash
+curl localhost:8080/sudoku
+```
+
+Response `200 OK`:
+
+```json
+[
+  "c6ff7e74-b642-452d-aa5b-c6ed51fcfe00-a.csv",
+  "c6ff7e74-b642-452d-aa5b-c6ed51fcfe00-q.csv"
+]
+```
+
 ## Errors
 
 Errors are returned as plain text.
@@ -92,4 +112,5 @@ Errors are returned as plain text.
 | `404`  | Sudoku not found                                         | No file exists for that ID                                                 |
 | `413`  | File is too large                                        | The upload is over 10KB                                                    |
 | `500`  | An error occurred while reading lines / writing lines    | The server failed to read or write a file                                  |
+| `500`  | An error occurred while listing files                    | The server failed to list the data folder                                  |
 | `500`  | Something went wrong                                     | Any other unexpected error                                                 |
